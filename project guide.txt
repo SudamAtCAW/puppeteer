@@ -1,0 +1,172 @@
+Web scraping is the process of extracting information from the internet, now the intention behind this can be research, education, business, analysis, and others. Basic web scraping script consists of a “crawler” that goes to the internet, surf around the web, and scrape information from given pages. We have gone over different web scraping tools by using programming languages and without programming like selenium, request, BeautifulSoup, MechanicalSoup, Parsehub, Diffbot, etc. It makes sense why everyone needs web scraping because it makes manual- data gathering processes very fast. And web scraping is the only solution when websites do not provide an API and data is needed.
+
+web scraping preview using node.js framework puppeteer
+In this demonstration, we are going to use Puppeteer and Node.js to build our web scraping tool.
+
+Node.js is an open-source server runtime environment that runs on various platforms like Windows, Linux, Mac OS X, etc. It is not a programming language. It uses JavaScript language as the main programming interface. It is free and capable of reading and writing files on a server and used in networking.
+
+Puppeteer is a Node library that provides a high-level API to control Chromium or Chrome browser over the DevTools Protocol. It runs headless by default but can be changed to run full (non-headless). It is built by Google.
+
+Using it, we can:
+
+Scare data from the internet.
+Create pdf from web pages.
+Take screenshots.
+Create automation testing.
+Create a server-side rendered version of the application.
+Track page loading process.
+Automate form submission.
+Since the launch developers have published two versions Puppeteer and Puppeteer-core.
+
+Puppeteer-core is a lightweight version of Puppeteer for launching your scripts in an existing browser or for connecting it to a remote one. It follows the latest maintenance LTS version of the Node framework.
+
+Let’s see the browser architecture of Puppeteer. As shown in the below diagram, faded entities are not currently represented in the Puppeteer framework. 
+
+tree structure of puppeteer
+credit : puppeteer official docs
+Root node Puppeteer communicates with the browser by using dev tools.
+Browser instances have multiple browser contexts.
+Browser context defines a browsing session and owns multiple pages.
+Page can have at least one mainframe.
+The frame has at least one execution context, i.e. default execution context where javascript is executed.
+Worker interacts with WebWorkers.
+Getting Started
+We are going to scrape data from a website using node.js, Puppeteer but first let’s set up our environment.
+
+We need to install node.js as we are going to use npm commands, npm is a package manager for javascript programming language. It is a subsidiary of GitHub. It is a default package manager which comes with javascript runtime environment Node.js.
+
+Download Node.js from here
+
+install
+Initializing Project
+Follow these steps to initialize your choice of a directory with puppeteer installed and ready for scraping tasks.
+
+Create a Project folder
+mkdir scraper
+cd scraper
+Initialize the project directory with the npm command 
+npm init
+Like git init it will initialize your working directory for node project, and it will present a sequence of prompt; just press Enter on every prompt, or you can use :
+
+npm init -y
+And it will append the default value for you, saved in package.json file in the current directory and your output will look something like this:
+
+package.json using npm init -y command
+Now use npm command to install Puppeteer:
+npm i puppeteer
+Note: When you install Puppeteer, it will download the latest version of Chromium (~205MB Mac, ~282MB Linux, ~154.2 MB Win) and it is recommended to let the chromium download to see puppeteer work fine with the API.
+
+Using these three steps, you can initialize puppeteers in your node environment!
+
+Quickstart
+For example – the following script will navigate to https://analyticsindiamag.com/ and save a screenshot as output.png
+
+const puppeteer = require('puppeteer');
+
+(async () => {
+  const browser = await puppeteer.launch();
+  const page = await browser.newPage();
+  await page.goto('https://analyticsindiamag.com/');
+  await page.screenshot({path: 'output.png'});
+
+  await browser.close();
+screenshot using await page.screenshot()
+Explanation:
+cons puppeteer = require(‘puppeteer’); is used to import puppeteer, it is going to be the first line of your scraper.
+await puppeteer.launch(); is used to initiate a web browser or more specifically to create a browser instance you can open your browser in headless mode and non- headless mode using {headless:false} by default its true that means it will run browser processes in the background.
+await puppeteer.launch({ headless: false}); opens a chromium-browser.
+await puppeteer.launch({ headless: true}); does not open browser.
+We use await to wrap method calls in an async function, which we immediately invoke.
+newPage() method is used to get the page object
+goto() method to surf that URL and load it in the browser.
+screenshot() takes a path argument and returns a screenshot of the webpage in 800×600 px form in the local directory.
+Once we are done with our script, we call close() method on the browser.
+Note: The initial default page size is set to 800×600 px, you can change that using :
+
+Page.setViewport()
+And can even extract a full pdf out of it by using a script like this:
+
+const puppeteer = require('puppeteer');
+
+(async () => {
+  const browser = await puppeteer.launch();
+  const page = await browser.newPage();
+  await page.goto('https://news.ycombinator.com', {waitUntil: 'networkidle2'});
+  await page.pdf({path: 'hackernews.pdf', format: 'A4'});
+
+  await browser.close();
+})();
+hackernew web scraping
+Scraping data from Wikipedia
+One of the use-cases we can try to find the true potential of Puppeteer is to scrape all the covid-19 data and export it into a JSON file. This example is taken from here, scraping data with node js can be a little trickier in terms of coding a scraper but outputs are accurate and fast, after trying these examples a couple of times you will get to know this framework better.
+
+Import puppeteer and file system(fs)
+const puppeteer = require('puppeteer');
+const fs = require('fs')
+Launch browser and open Wikipedia page of all covid data country wise
+const scrap = async () =>{
+    const browser = await puppeteer.launch({headless : false});
+    const page = await browser.newPage();
+await
+page.goto('https://en.wikipedia.org/wiki/2019%E2%80%9320_coronavirus_pandemic_by_country_and_territory', {waitUntil : 'domcontentloaded'}) // navigate to url and wait for page loading
+Inspect the webpage is pretty simple, as we discussed in an earlier tutorial for web scraping like here, just go to the website and right-click -> inspect to enter into developer mode to see the source code of the website, as shown below, on selecting the first row we can see in which tag we are having our data, like in this case div class “covid19-container” contains the table with id “thetable ” this is our target table.
+inspecting wikipedia
+page.$$eval(selector, pageFunction[,….args]) return an array of all the elements that matches with our argument string we passed, (‘div#covid19-container table#thetable tbody tr’,(trows) is going to extract all the rows from covid19 container. For more information, you can visit here.
+
+const scrap = async () =>{
+    const browser = await puppeteer.launch({headless : false}); //browser initiate
+    const page = await browser.newPage();  // opening a new blank page
+    await page.goto('https://en.wikipedia.org/wiki/2019%E2%80%9320_coronavirus_pandemic_by_country_and_territory', {waitUntil : 'domcontentloaded'}) // navigate to url and wait until page loads completely
+
+    const recordList = await page.$$eval('div#covid19-container table#thetable tbody tr',(trows)=>{
+        let rowList = []    
+        trows.forEach(row => {
+                let record = {'country' : '','cases' :'', 'death' : '', 'recovered':''}
+                record.country = row.querySelector('a').innerText; // (tr < th < a) anchor tag text contains country name
+                const tdList = Array.from(row.querySelectorAll('td'), column => column.innerText); // getting textvalue of each column of a row and adding them to a list.
+                record.cases = tdList[0];        
+                record.death = tdList[1];       
+                record.recovered = tdList[2];   
+                if(tdList.length >= 3){         
+                    rowList.push(record)
+                }
+            });
+        return rowList;
+    })
+    console.log(recordList)
+    await page.screenshot({ path: 'screenshots/wikipedia.png' }); //screenshot 
+    browser.close();
+First, eval will extract the rows from the table having id thetable
+To select using id always use ‘#’ and postfix with id of the parent element.
+To select using class use “.” and postfix with the class of parent element.
+Now the rows are extracted from the table. We are going to iterate them all over the table.
+Country name for covid report is present in <a> ankle tag and other are present in <td> data so to extract from there we are going to use :
+record.country = row.querySelector('a').innerText;
+
+const tdList = Array.from(row.querySelectorAll('td'), column => column.innerText);
+Here we used querySelector() which returns the first element that matches the selector. Alternatively, we can use querySelectorAll() which returns all the elements that match the selector.
+
+Note: if any other table having tr as the same path then it will return rows of that table too.
+
+The other data from list will be extracted by using :
+record.cases = tdList[0];        
+record.death = tdList[1];       
+record.recovered = tdList[2]; 
+rowList.push(record) will push the record inside the rowList=[].
+Store the output
+fs.writeFile('covid-19.json',JSON.stringify(recordList, null, 2),(err)=>{
+        if(err){console.log(err)}
+        else{console.log('Saved Successfully!')}
+    })
+};
+scrap();
+Fs is a filesystem library used by the node. 
+JSON.stringify() converts an array of objects to string and then writes it to a file using the file system module.
+Output
+A full dataset in JSON object ready for further processing.
+
+output of data extracted from Wikipedia of covid-19 in JSON format
+Conclusion
+We learned Puppeteer is a powerful library for automating things, web scraping, taking screenshots, saving pdfs, debugging, and it supports non-headless environments too just like selenium. We saw how our web crawlers scraped data from Wikipedia and then saved it in a JSON file. In short, you learned a new way to automate things and scrape data from the internet.
+
+Puppeteer has quite a lot of functions that were not discussed in this tutorial. To learn more, check out Puppeteer’s official documentation.
