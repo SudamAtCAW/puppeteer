@@ -16,7 +16,6 @@ const scrap = async () =>{
      const deathsInMillion = await page.$x("//div[@id='covid-19-cases-deaths-and-rates-by-location']//tbody//tr//th/following-sibling::td[1]")
      const deaths = await page.$x("//div[@id='covid-19-cases-deaths-and-rates-by-location']//tbody//tr//th/following-sibling::td[2]")
      const cases = await page.$x("//div[@id='covid-19-cases-deaths-and-rates-by-location']//tbody//tr//th/following-sibling::td[3]")
-     let rowList = [] 
     let record = {'country' : '','cases' :'', 'deaths' : '', 'deathsInMillion':''}
  
 
